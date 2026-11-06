@@ -1,0 +1,87 @@
+{% load static %}
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+        {% block title %}
+        {%endblock%}
+
+    </title>
+    <!-- Bootstrap 5 -->
+    <link href="{% static 'main/css/bootstrap.min.css' %}" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <!-- Меню -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Мій сайт</a>
+
+            <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#mainMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="mainMenu">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/main/static">Головна</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about">Про нас</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Послуги</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Контакти</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Основний контент -->
+    <main class="container mt-4">
+
+    {% block content %}
+        {% endblock %}
+
+        <!-- Блоки контенту -->
+        <div class="row g-4">
+            {% for card in cards %}
+            
+                <div class="col-md-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{card.name}}</h5>
+                            <section class="card" style="max-width: 320px">
+                            <img src="{% static 'main/img/'|add:card.image %}" class="card-img-top" alt="{{ card.name }}">
+                            <div class="card-body">
+                                <h4 class="card-title">{{card.name}}</h4>
+                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
+                                <a href="#" class="btn-solid theme-primary">Go somewhere</a>
+                            </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+
+            {% endfor %}
+            </div>
+        </div>
+    </main>
+
+    <!-- Підвал -->
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">© 2026 Мій сайт. Усі права захищені.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="{% static 'main/js/bootstrap.bundle.min.js'%}"></script>
+</body>
+</html>
