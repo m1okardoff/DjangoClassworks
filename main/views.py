@@ -1,5 +1,6 @@
+import json
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 
 # Спільний список карток
 cards = [
@@ -101,3 +102,23 @@ def search_by_name(request, name):
     request.GET = request.GET.copy()
     request.GET['name'] = name
     return search(request)
+
+
+def register(request):
+    if request.method == 'POST':
+        try:
+            # Отримуємо сирі дані з тіла запиту і декодуємо JSON
+            data = json.loads(request.body)
+
+            # Виводимо отримані дані у термінал сервера
+            print("\n" + "=" * 40)
+            print("ОТРИМАНО ДАНІ РЕЄСТРАЦІЇ (JSON):")
+            print(data)
+            print("=" * 40 + "\n")
+
+            return JsonResponse({'status': 'success', 'message': 'Дані успішно отримано сервером!'})
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Некоректний формат JSON!'}, status=400)
+
+    # Якщо GET-запит — просто віддаємо сторінку з формою
+    return render(request, 'main/register.html')

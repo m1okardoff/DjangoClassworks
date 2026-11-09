@@ -1,0 +1,86 @@
+{% extends 'main/layout.html' %}
+
+{% block title %}
+Реєстрація
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-5">
+    <div class="card shadow-sm mt-4">
+      <div class="card-body p-4">
+        <h2 class="card-title text-center mb-4">Реєстрація</h2>
+
+        <!-- Блок повідомлення про успіх / помилку -->
+        <div id="alertMessage" class="alert d-none" role="alert"></div>
+
+        <form id="registerForm">
+          {% csrf_token %}
+
+          <div class="mb-3">
+            <label for="username" class="form-label">Ім'я користувача</label>
+            <input type="text" class="form-control" id="username" name="username" placeholder="Введіть логін" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="email" class="form-label">Електронна пошта</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="password" class="form-label">Пароль</label>
+            <input type="password" class="form-control" id="password" name="password" placeholder="Введіть пароль"
+                   required>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100">Зареєструватися</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    document.getElementById('registerForm').addEventListener('submit', async function (event) {
+        event.preventDefault(); // Запобігаємо звичайному перезавантаженню сторінки
+
+        // Збираємо значення всіх полів форми в об'єкт
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+
+        // Отримуємо значення CSRF-токена з форми (необхідно для POST у Django)
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const alertBox = document.getElementById('alertMessage');
+
+        try {
+            // Відправляємо дані у форматі JSON за допомогою fetch
+            const response = await fetch("{% url 'register' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alertBox.className = "alert alert-success";
+                alertBox.textContent = result.message || "Успішно!";
+                alertBox.classList.remove('d-none');
+                this.reset(); // Очищаємо поля після успіху
+            } else {
+                alertBox.className = "alert alert-danger";
+                alertBox.textContent = result.message || "Помилка при реєстрації.";
+                alertBox.classList.remove('d-none');
+            }
+        } catch (error) {
+            console.error("Помилка запиту:", error);
+            alertBox.className = "alert alert-danger";
+            alertBox.textContent = "Не вдалося з'єднатися з сервером.";
+            alertBox.classList.remove('d-none');
+        }
+    });
+</script>
+{% endblock %}
