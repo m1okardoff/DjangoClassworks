@@ -1,4 +1,5 @@
 {% extends 'main/layout.html' %}
+{% load custom_pluralize_filter %}
 {% block title %}
 About Page
 {% endblock %}
@@ -8,6 +9,14 @@ About Page
         <div class="p-5 mb-4 bg-white rounded-3 shadow-sm">
             <h1 class="display-5 fw-bold">Вітаємо на нашому сайті!</h1>
             <p class="fs-5 text-muted">
+                {{ text | default:"Текст не передано"}}
+                <ul>
+                    {% for el in data %}
+                        <li>{{el}} карт{{el | uk_pluralize:"ка,ки,ок" }}</li>
+                        {% empty %}
+                        <li>No data</li>
+                    {% endfor %}
+                </ul>
                 <ul>
                     {% for framework in frameworks %}
                         <li>{{ forloop.counter0 }} {{framework}}</li>

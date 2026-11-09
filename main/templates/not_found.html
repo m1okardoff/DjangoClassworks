@@ -1,0 +1,37 @@
+{% extends 'main/layout.html' %}
+
+{% block title %}
+Not Found - Картку не знайдено
+{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center">
+    <div class="card shadow-sm border-0 p-5 mx-auto" style="max-width: 600px;">
+        <div class="mb-4">
+            <div class="display-1 text-danger fw-bold">404</div>
+            <h2 class="h3 fw-bold text-dark mt-2">Картку не знайдено</h2>
+            {% if query %}
+            <p class="text-muted mt-2">
+                За запитом <strong class="text-dark">"{{ query }}"</strong> нічого не знайдено.
+            </p>
+            {% else %}
+            <p class="text-muted mt-2">
+                За вказаними критеріями пошуку картку не знайдено.
+            </p>
+            {% endif %}
+        </div>
+
+        <!-- Форма для повторного пошуку -->
+        <form action="{% url 'search' %}" method="GET" class="mb-4">
+            <div class="input-group">
+                <input type="text" name="name" class="form-control" placeholder="Введіть іншу назву (наприклад, Розділ 1)..." value="{{ query|default:'' }}" required>
+                <button class="btn btn-primary" type="submit">Шукати знову</button>
+            </div>
+        </form>
+
+        <div>
+            <a href="/" class="btn btn-outline-secondary">← Повернутися на головну</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
