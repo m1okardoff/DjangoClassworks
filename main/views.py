@@ -1,6 +1,10 @@
 import json
+from datetime import datetime
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
+from django.contrib.auth.hashers import make_password
+
+from main.models import Card, User
 
 # Спільний список карток
 cards = [
@@ -106,19 +110,29 @@ def search_by_name(request, name):
 
 def register(request):
     if request.method == 'POST':
-        try:
-            # Отримуємо сирі дані з тіла запиту і декодуємо JSON
-            data = json.loads(request.body)
+        username = request.POST.get('username', '').strip()
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '')
+        avatar = request.FILES.get('avatar')
 
-            # Виводимо отримані дані у термінал сервера
-            print("\n" + "=" * 40)
-            print("ОТРИМАНО ДАНІ РЕЄСТРАЦІЇ (JSON):")
-            print(data)
-            print("=" * 40 + "\n")
+        if not username or not email or not password:
+            return JsonResponse({'status': 'error', 'message': 'Будь ласка, заповніть усі обов\'язкові поля!'}, status=400)
 
-            return JsonResponse({'status': 'success', 'message': 'Дані успішно отримано сервером!'})
-        except json.JSONDecodeError:
-            return JsonResponse({'status': 'error', 'message': 'Некоректний формат JSON!'}, status=400)
+        if User.objects.filter(username=username).exists():
+            return JsonResponse({'status': 'error', 'message': 'Користувач з таким ім\'ям вже існує!'}, status=400)
 
-    # Якщо GET-запит — просто віддаємо сторінку з формою
+        if User.objects.filter(email=email).exists():
+            return JsonResponse({'status': 'error', 'message': 'Користувач з такою поштою вже існує!'}, status=400)
+
+        user = User(
+            username=username,
+            email=email,
+            password=make_password(password),
+            avatar=avatar
+        )
+        user.save()
+
+        return JsonResponse({'status': 'success', 'message': f'Користувача {user.username} успішно зареєстровано!'})
+
     return render(request, 'main/register.html')
+

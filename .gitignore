@@ -22,3 +22,6 @@ db.sqlite3
 # Local settings / secrets
 .env
 local_settings.py
+
+# Media uploads
+media/
